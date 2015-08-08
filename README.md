@@ -20,9 +20,18 @@ But the script also does a lot of more things:
 * It also supports plain Makefike based projects. So 'mk' behaves like typing
   'make' if a Makefile exists in the current dir.
 
+Demo
+----
+
+The following demo video shows how to create the build dir, invoke cmake and build with a single mk call. Also you can see how this integrate into Vim, so that you can build the project inside Vim, no matter what your current directory is. In Vim you can also see that YCM completion just works without any project specific configuration.
+
+![Mk Script Demo][demo]
+
 Installation
 ------------
 
 Just copy/link the script into /usr/local/bin. Ensure that it is executable
 and that /usr/local/bin is in your PATH variable.
+
+[demo]: https://github.com/gergap/mk/blob/master/demo.gif
 
