@@ -8,6 +8,16 @@
 # but you can configure an absolute path using the env variable MK_BLDDIR.
 # All arguments to 'mk' are passed to the 'make' command.
 
+# Add option to only run cmake and don't build. This maybe useful for testing
+# CMake projects or reconfiguring your project.
+# Just run 'mk cmake <more options>'.
+if [ "$1" = "cmake" ]; then
+    shift # eat first option
+    ONLY_CMAKE=1
+else
+    ONLY_CMAKE=0
+fi
+
 # Sometimes you simply have Makefile based projects and don't use CMake,
 # we make this also working by simply executing 'make' if a Makefile exists
 # in the current folder. I use this e.g. for some AVR projects.
@@ -75,6 +85,10 @@ if [ -f "$BLD_DIR/Makefile" ] && [ ! -f "$BLD_DIR/compile_commands.json" ]; then
     cd $BLD_DIR
     cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
     cd -
+fi
+if [ ${ONLY_CMAKE} -eq 1 ]; then
+    # stop here
+    exit 0
 fi
 
 # execute make from the build dir
