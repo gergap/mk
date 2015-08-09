@@ -69,6 +69,14 @@ else
     fi
 fi
 
+# turn on CMAKE_EXPORT_COMPILE_COMMANDS of compile_commands.json does not exist,
+# but the Makefile exists already
+if [ -f "$BLD_DIR/Makefile" ] && [ ! -f "$BLD_DIR/compile_commands.json" ]; then
+    cd $BLD_DIR
+    cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+    cd -
+fi
+
 # execute make from the build dir
 echo "cd into build dir '$BLD_DIR'..."
 cd $BLD_DIR
