@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo ln -s $PWD/mk /usr/local/bin/mk
+
