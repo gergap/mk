@@ -107,7 +107,7 @@ if [ -e Makefile ]; then
     make -j$NUM_CPUS $*
 else
     echo "executing ninja..."
-    ninja
+    ninja $*
 fi
 echo "cd back"
 cd -
