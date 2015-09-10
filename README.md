@@ -19,6 +19,13 @@ But the script also does a lot of more things:
   inside Vim works automatically if you are using the YouCompleteMe plugin
 * It also supports plain Makefike based projects. So 'mk' behaves like typing
   'make' if a Makefile exists in the current dir.
+* [NEW] Now it supports also the Ninja build system instead of GNU Make.
+  Ninja will be detected automatically and will be used by default instead
+  of make to speed things up. If no Ninja is available it will fallback to Make.
+  The speedup for clean rebuilds with Ninja+CCache is enormous. I measured
+  performance improvement about a factor 10 for my projects.
+  If you don't no Ninja yet, checkout https://martine.github.io/ninja
+  and https://ccache.samba.org
 
 Demo
 ----
