@@ -70,10 +70,17 @@ else
             # create build directory
             mkdir "$BLD_DIR"
             cd "$BLD_DIR"
-            # create Makefile using CMake
-            # by turning on CMAKE_EXPORT_COMPILE_COMMANDS we create a compile_commands.jso file
-            # which can be used for semantic completion inside vim and YouCompleteMe
-            cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$SRC_DIR" || exit 1
+
+            # detect ninja and use it preferable
+            if [ -x /usr/bin/ninja ]; then
+                # Create ninja rules using CMake
+                cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$SRC_DIR" || exit 1
+            else
+                # create Makefile using CMake
+                # by turning on CMAKE_EXPORT_COMPILE_COMMANDS we create a compile_commands.jso file
+                # which can be used for semantic completion inside vim and YouCompleteMe
+                cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$SRC_DIR" || exit 1
+            fi
             cd -
         fi
     fi
@@ -94,8 +101,14 @@ fi
 # execute make from the build dir
 echo "cd into build dir '$BLD_DIR'..."
 cd $BLD_DIR
-echo "executing make..."
-make -j5 $*
+if [ -e Makefile ]; then
+    NUM_CPUS=`grep -c ^processor /proc/cpuinfo`
+    echo "executing make -j $NUM_CPUS ..."
+    make -j$NUM_CPUS $*
+else
+    echo "executing ninja..."
+    ninja
+fi
 echo "cd back"
 cd -
 
