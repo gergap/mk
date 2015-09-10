@@ -8,6 +8,11 @@
 # but you can configure an absolute path using the env variable MK_BLDDIR.
 # All arguments to 'mk' are passed to the 'make' command.
 
+# default install prefix. As a developer normally I install into my project 
+# directory, not into the system /usr/local, which is CMake's default.
+# Change this to your needs.
+INSTALL_PREFIX="\$TOPLEVEL_GIT_DIR"
+
 # Add option to only run cmake and don't build. This maybe useful for testing
 # CMake projects or reconfiguring your project.
 # Just run 'mk cmake <more options>'.
@@ -39,8 +44,10 @@ else
     # use git to find our build directory
     # normally I use a folder 'bld' inside the toplevel dir
     TOPLEVEL_GIT_DIR=`git rev-parse --show-toplevel`
-
-    echo "TOPLEVEL_GIT_DIR=$TOPLEVEL_GIT_DIR"
+    if [ "$INSTALL_PREFIX" == "\$TOPLEVEL_GIT_DIR" ]; then
+        INSTALL_PREFIX=$TOPLEVEL_GIT_DIR
+    fi
+    #echo "TOPLEVEL_GIT_DIR=$TOPLEVEL_GIT_DIR"
     # it's possible that we are in a submodule and not in the top-level git
     # directory. So we go up one directory and check if we are still in a git
     # working tree. If so we retrieve this top-level dir.
@@ -51,7 +58,7 @@ else
         TOPLEVEL_GIT_DIR=`git rev-parse --show-toplevel`
         echo "TOPLEVEL_GIT_DIR=$TOPLEVEL_GIT_DIR"
     fi
-    cd -
+    cd - > /dev/null
 
     # compute build directory name
     BLD_DIR="$TOPLEVEL_GIT_DIR/bld"
@@ -74,12 +81,12 @@ else
             # detect ninja and use it preferable
             if [ -x /usr/bin/ninja ]; then
                 # Create ninja rules using CMake
-                cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$SRC_DIR" || exit 1
+                cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX "$SRC_DIR" || exit 1
             else
                 # create Makefile using CMake
                 # by turning on CMAKE_EXPORT_COMPILE_COMMANDS we create a compile_commands.jso file
                 # which can be used for semantic completion inside vim and YouCompleteMe
-                cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON "$SRC_DIR" || exit 1
+                cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX "$SRC_DIR" || exit 1
             fi
             cd -
         fi
