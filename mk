@@ -80,14 +80,11 @@ else
 
             # detect ninja and use it preferable
             if [ -x /usr/bin/ninja ]; then
-                # Create ninja rules using CMake
-                cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX "$SRC_DIR" || exit 1
+                GENERATOR='CodeBlocks - Ninja'
             else
-                # create Makefile using CMake
-                # by turning on CMAKE_EXPORT_COMPILE_COMMANDS we create a compile_commands.jso file
-                # which can be used for semantic completion inside vim and YouCompleteMe
-                cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX "$SRC_DIR" || exit 1
+                GENERATOR='CodeBlocks - Unix Makefiles'
             fi
+            cmake -G $GENERATOR -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX "$SRC_DIR" || exit 1
             cd -
         fi
     fi
